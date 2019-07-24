@@ -1,6 +1,8 @@
 package com.ismaelElias.lavanderia.models;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,9 +32,18 @@ public class OrdemServico implements Entidade {
 	@Column(name = "DT_RETIRADA")
 	private Date dataRetirada;
 
-	@OneToMany(fetch = FetchType.EAGER)
-	@JoinColumn(name = "ID_ITEM")
-	private List<Item> items;
+	@Column(name = "VL_TOTAL", precision = 15, scale = 5)
+	private BigDecimal valorTotal;
+
+	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)
+	@JoinTable(name = "ITENS_ORDEM",
+			joinColumns = {
+					@JoinColumn(name = "ID_ORDEM", referencedColumnName = "ID_ORDEM_SERVICO")
+			},
+			inverseJoinColumns = {
+					@JoinColumn(name = "ID_ITEM", referencedColumnName = "ID_ITEM")
+			})
+	private List<Item> itens = new ArrayList<>();
 
 
 	@Override
@@ -69,10 +80,10 @@ public class OrdemServico implements Entidade {
 	}
 
 	public List<Item> getItems() {
-		return items;
+		return itens;
 	}
 
 	public void setItems(List<Item> items) {
-		this.items = items;
+		this.itens = itens;
 	}
 }
